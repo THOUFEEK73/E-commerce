@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.product-card img {
+   width: 200px;
+   height: auto;
+   
+}
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+}
+.navbar{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
