@@ -32,30 +32,40 @@
 
     <h2 class="text-xl font-semibold text-center mb-8 text-gray-700">Create Your Account</h2>
 
-    <form action="/user/signup" method="POST" class="space-y-5">
+    <form id="signupForm" class="space-y-5">
       <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-        <input type="text" id="name" name="name" required
+        <input type="text" id="name" name="name" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none transition duration-300 focus:scale-[1.02]" />
+          <p id="nameError" class="hidden text-red-500 text-sm font-medium mt-1"></p>
       </div>
 
       <div>
         <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">phone No</label>
-        <input type="number" id="phone" name="phone" required
+        <input type="number" id="phone" name="phone" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none transition duration-300 focus:scale-[1.02]" />
+          <p id="phoneError" class="hidden text-red-500 text-sm font-medium mt-1"></p>
       </div>
 
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input type="email" id="email" name="email" required
+        <input type="email" id="email" name="email" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none transition duration-300 focus:scale-[1.02]" />
+          <p id="emailError" class="hidden text-red-500 text-sm font-medium mt-1"></p>
       </div>
 
       <div>
         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-        <input type="password" id="password" name="password" required
+        <input type="password" id="password" name="password" 
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none transition duration-300 focus:scale-[1.02]" />
+          <p id="passwordError" class="hidden text-red-500 text-sm font-medium mt-1"></p>
       </div>
+
+      <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" 
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none transition duration-300 focus:scale-[1.02]" />
+        <p id="confirmPasswordError" class="hidden text-red-500 text-sm font-medium mt-1"></p>
+      
 
       <button type="submit"
         class="w-full bg-pink-500 text-white font-semibold py-2 rounded-lg hover:bg-pink-600 transition-transform transform hover:scale-[1.03] duration-300">
@@ -63,7 +73,7 @@
       </button>
     </form>
 
-    <p class="text-center text-sm text-gray-600 mt-6">
+  
       Already have an account?
       <a href="/user/login" class="text-pink-500 font-medium hover:underline">Log In</a>
     </p>
@@ -71,3 +81,49 @@
 
 </body>
 </html>
+
+
+<script>
+
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fields = ["name", "phone", "email", "password", "confirmPassword"];
+  fields.forEach(f => {
+    const errorEl = document.getElementById(`${f}Error`);
+    errorEl.textContent = "";
+    errorEl.classList.add("hidden");
+  });
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password  = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+    try{
+      const response = await fetch('/user/signup',{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({name,phone,email,password,confirmPassword})
+      })
+
+      const data = await response.json();
+      if (response.ok) {
+        window.location.href = `/user/signup-otp?email=${email}`;
+    } else {
+      if (data.field && data.message) {
+        const errorEl = document.getElementById(`${data.field}Error`);
+        const inputEl = document.getElementById(data.field);
+        if (errorEl && inputEl) {
+          errorEl.textContent = data.message;
+          errorEl.classList.remove("hidden");
+          inputEl.classList.add("border-red-500");
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error:", err);
+  }
+
+})
+
+</script>
