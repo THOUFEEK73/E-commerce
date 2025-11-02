@@ -26,27 +26,95 @@
       Enter the 6-digit code sent to your email
     </p>
 
-    <form class="space-y-6">
-      <div class="flex justify-center gap-3">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+    <form id="otpForm" class="space-y-6">
+      <div class="flex justify-center gap-3" id="otpInputs">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" />
       </div>
-
+    
+      <!-- Inline error message -->
+      <p id="errorBox" class="hidden text-center text-red-500 font-medium"></p>
+    
       <button type="submit"
         class="w-full py-3 bg-pink-500 text-white font-medium rounded-lg hover:bg-pink-600 transition">
         Verify OTP
       </button>
-
+    
       <p class="text-center text-gray-500 text-sm">
         Didn’t receive the code?
-        <a href="#" class="text-pink-500 hover:underline">Resend</a>
+        <a href="#" id="resendOTP" class="text-pink-500 hover:underline">Resend</a>
       </p>
     </form>
+    
   </div>
 
 </body>
 </html>
+
+
+<script>
+  const form = document.getElementById("otpForm");
+  const otpInputs = document.querySelectorAll(".otp-input");
+  const errorBox = document.getElementById("errorBox");
+
+  // Auto-focus next input
+  otpInputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/[^0-9]/g, ''); // only digits
+      if (input.value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+      hideError();
+    });
+  });
+
+  // Show / hide error message
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove("hidden");
+  }
+
+  function hideError() {
+    errorBox.textContent = "";
+    errorBox.classList.add("hidden");
+  }
+
+  // Handle form submit
+  form.addEventListener("submit", async (e) => {
+    console.log('trieggerd')
+    e.preventDefault();
+
+    const otp = Array.from(otpInputs).map((i) => i.value).join("");
+
+    if (otp.length !== 6) {
+      showError("Please enter all 6 digits.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/user/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success → Redirect or show success state
+        hideError();
+        window.location.href = "/user/success";
+      } else {
+        showError(data.message || "Invalid or expired OTP.");
+      }
+    } catch (err) {
+      console.error("Error verifying OTP:", err);
+      showError("Something went wrong. Please try again.");
+    }
+  });
+</script>
+
