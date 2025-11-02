@@ -16,8 +16,6 @@ const transporter = nodemailer.createTransport({
  const sentOTP = async(toEmail,otp)=>{
     try{
 
-        console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS ? "✔️ Loaded" : "❌ Missing");
-
         const mailOptions = {
             from: `"Toffee Puddle" <${process.env.EMAIL_USER}>`,
             to: toEmail,
