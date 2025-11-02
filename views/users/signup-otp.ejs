@@ -85,11 +85,13 @@
 
   // Handle form submit
   form.addEventListener("submit", async (e) => {
-    console.log('trieggerd')
+
     e.preventDefault();
 
     const otp = Array.from(otpInputs).map((i) => i.value).join("");
+    const email = sessionStorage.getItem("signupEmail");
 
+    console.log('email is',email)
     if (otp.length !== 6) {
       showError("Please enter all 6 digits.");
       return;
@@ -99,7 +101,7 @@
       const response = await fetch("/user/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp }),
+        body: JSON.stringify({ otp,email }),
       });
 
       const data = await response.json();

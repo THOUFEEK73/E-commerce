@@ -108,6 +108,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
 
       const data = await response.json();
       if (response.ok) {
+        sessionStorage.setItem("signupEmail",email)
         window.location.href = `/user/signup-otp?email=${email}`;
     } else {
       if (data.field && data.message) {
