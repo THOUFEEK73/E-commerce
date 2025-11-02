@@ -91,7 +91,7 @@
     const otp = Array.from(otpInputs).map((i) => i.value).join("");
     const email = sessionStorage.getItem("signupEmail");
 
-    console.log('email is',email)
+
     if (otp.length !== 6) {
       showError("Please enter all 6 digits.");
       return;
@@ -109,7 +109,7 @@
       if (response.ok) {
         // Success → Redirect or show success state
         hideError();
-        window.location.href = "/user/success";
+        window.location.href = "/user/homePage";
       } else {
         showError(data.message || "Invalid or expired OTP.");
       }
