@@ -166,3 +166,16 @@ export const postLoginPage = async(req,res)=>{
   }
  
 }
+
+export const logoutUser= async(req,res)=>{
+  console.log('test...')
+     req.session.destroy((err)=>{
+          if(err){
+            console.log(err);
+            return res.redirect('users/login');
+          }
+
+          res.clearCookie('connect.sid');
+          res.redirect('/user/login');
+     })
+}

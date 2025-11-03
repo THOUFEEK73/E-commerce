@@ -109,7 +109,7 @@
       if (response.ok) {
         // Success → Redirect or show success state
         hideError();
-        window.location.href = "/user/homePage";
+        window.location.href = "/user/home";
       } else {
         showError(data.message || "Invalid or expired OTP.");
       }

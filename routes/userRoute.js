@@ -6,10 +6,11 @@ import {
   getSignUpOTP,
   verifyOTP,
   postLoginPage,
+  logoutUser,
 } from "../controllers/userController/authController.js";
 import { getHomePage } from "../controllers/userController/homePage.js";
 import { isAthenticated } from "../middleWare/authMiddleware.js";
-
+import { noCache } from "../middleWare/noCache.js";
 const router = express.Router();
 
 
@@ -23,9 +24,11 @@ router.post("/verify-otp", verifyOTP);
 
 /// LOGIN INFO /// 
 
-router.get("/login", getLoginPage);
-router.post('/login',postLoginPage)
+router.get("/login",noCache,getLoginPage);
+router.post('/login',noCache,postLoginPage)
 
-router.get("/home", isAthenticated, getHomePage);
+router.get('/logout',noCache,logoutUser);
+
+router.get("/home",noCache, isAthenticated, getHomePage);
 
 export default router;
